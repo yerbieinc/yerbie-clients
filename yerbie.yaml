@@ -1,0 +1,107 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Yerbie API
+  license:
+    name: MIT
+host: localhost:5865
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  "/jobs/schedule":
+    post:
+      summary: Schedule a job to be run
+      operationId: scheduleJob
+      tags:
+      - jobs
+      parameters:
+        - in: body
+          name: job
+          description: The job to schedule.
+          schema:
+            $ref: "#/definitions/Job"
+      responses:
+        '200':
+          description: A valid job response
+          schema:
+            $ref: "#/definitions/Job"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  "/jobs/reserve/{queue}":
+    post:
+      summary: Request for a job to handle
+      operationId: reserveJob
+      tags:
+      - jobs
+      parameters:
+        - in: path
+          name: queue
+          required: true
+          description: The queue to take jobs from
+          type: string
+      responses:
+        '200':
+          description: A valid job response
+          schema:
+            $ref: "#/definitions/Job"
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  "/jobs/finished/":
+    post:
+      summary: Tell Yerbie the client is finished with a job
+      operationId: finishedJob
+      tags:
+      - tags
+      parameters:
+        - in: query
+          name: jobToken
+          required: true
+          description: The job token that was finished
+          type: string
+      responses:
+        '200':
+          description: A valid job response
+          schema:
+            type: object
+            properties:
+              jobToken:
+                type: string
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  Job:
+    required:
+    - jobToken
+    - queue
+    - jobData
+    - delaySeconds
+    properties:
+      jobToken:
+        type: string
+      queue:
+        type: string
+      jobData:
+        type: string
+      delaySeconds:
+        type: integer
+        format: int64
+  Error:
+    required:
+    - code
+    - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
