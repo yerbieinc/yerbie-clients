@@ -23,12 +23,12 @@ paths:
           name: job
           description: The job to schedule.
           schema:
-            $ref: "#/definitions/Job"
+            $ref: "#/definitions/JobRequest"
       responses:
         '200':
           description: A valid job response
           schema:
-            $ref: "#/definitions/Job"
+            $ref: "#/definitions/JobRequest"
         default:
           description: unexpected error
           schema:
@@ -49,7 +49,7 @@ paths:
         '200':
           description: A valid job response
           schema:
-            $ref: "#/definitions/Job"
+            $ref: "#/definitions/JobRequest"
         default:
           description: unexpected error
           schema:
@@ -79,7 +79,7 @@ paths:
           schema:
             $ref: "#/definitions/Error"
 definitions:
-  Job:
+  JobRequest:
     required:
     - jobToken
     - queue
