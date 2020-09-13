@@ -37,6 +37,10 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.3.3'
+
+    // Logging
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.13'
+    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.13'
 }
 
 spotless {

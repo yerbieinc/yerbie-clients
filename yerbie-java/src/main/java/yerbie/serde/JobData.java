@@ -11,6 +11,12 @@ public class JobData<D> {
     this.jobDataClass = jobData.getClass();
   }
 
+  public JobData(SerializationFormat serializationFormat, D jobData, Class jobDataClass) {
+    this.serializationFormat = serializationFormat;
+    this.jobData = jobData;
+    this.jobDataClass = jobDataClass;
+  }
+
   public D getJobData() {
     return jobData;
   }

@@ -17,7 +17,7 @@ import yerbie.serde.JobSpec;
 import yerbie.serde.JobSpecTransformer;
 
 public class YerbieClient {
-  private static final String urlFormatString = "%s:%d";
+  private static final String URL_FORMAT_STRING = "%s:%d";
   private final YerbieAPI yerbieAPI;
   private final DataTransformer dataTransformer;
   private final JobSpecTransformer jobSpecTransformer;
@@ -28,7 +28,7 @@ public class YerbieClient {
       DataTransformer dataTransformer,
       JobSpecTransformer jobSpecTransformer) {
     this(
-        new YerbieAPIImpl(String.format(urlFormatString, host, port)),
+        new YerbieAPIImpl(String.format(URL_FORMAT_STRING, host, port)),
         dataTransformer,
         jobSpecTransformer);
   }
@@ -55,7 +55,11 @@ public class YerbieClient {
       String jobToken = UUID.randomUUID().toString();
       String serializedJobData = jobDataTransformer.serializeJobData(jobData);
 
-      JobSpec jobSpec = new JobSpec(jobData.getJobDataClass().getName(), serializedJobData);
+      JobSpec jobSpec =
+          new JobSpec(
+              jobData.getJobDataClass().getName(),
+              serializedJobData,
+              jobData.getSerializationFormat());
 
       // Ensure that it's possible to deserialize the job data before sending it over to store.
       JobData<D> jobDataDeserialized =

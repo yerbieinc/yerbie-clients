@@ -37,7 +37,8 @@ public class YerbieClientTest {
     when(mockJobSpecTransformer.serializeJobSpec(
             new JobSpec(
                 StubData.TEST_YERBIE_JOB_DATA.getJobDataClass().getName(),
-                StubData.TEST_JOB_DATA_STRING)))
+                StubData.TEST_JOB_DATA_STRING,
+                SerializationFormat.JSON)))
         .thenReturn(StubData.TEST_JOB_SPEC_DATA_STRING);
   }
 
