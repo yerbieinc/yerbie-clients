@@ -2,25 +2,22 @@ package yerbie.client;
 
 import java.util.Map;
 import java.util.function.Supplier;
+import yerbie.exception.JobNotFoundException;
 import yerbie.job.Job;
 
 public class JobRepositoryImpl implements JobRepository {
-  private final Map<String, Supplier<Job<?>>> jobDatatoJobSupplierMap;
+  private final Map<Class, Supplier<Job<?>>> jobDatatoJobSupplierMap;
 
-  public JobRepositoryImpl(Map<String, Supplier<Job<?>>> jobDatatoJobSupplierMap) {
+  public JobRepositoryImpl(Map<Class, Supplier<Job<?>>> jobDatatoJobSupplierMap) {
     this.jobDatatoJobSupplierMap = jobDatatoJobSupplierMap;
   }
 
   @Override
-  public Job findJobForJobData(Object jobData) {
-    System.out.println("finding job for " + jobData.getClass().getName());
-
-    if (!(jobDatatoJobSupplierMap.containsKey(jobData.getClass().getName()))) {
-      // throw exception
-      System.out.println("Could not find job!!!");
-      return null;
+  public Job findJobForJobData(Object jobData) throws JobNotFoundException {
+    if (!(jobDatatoJobSupplierMap.containsKey(jobData.getClass()))) {
+      throw new JobNotFoundException(jobData.getClass());
     }
 
-    return jobDatatoJobSupplierMap.get(jobData.getClass().getName()).get();
+    return jobDatatoJobSupplierMap.get(jobData.getClass()).get();
   }
 }

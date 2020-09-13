@@ -49,26 +49,6 @@ public class YerbieConsumerTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void testFetchValidJob() throws Exception {
-    StubData.TestJob jobToRun = new StubData.TestJob();
-    when(mockYerbieAPI.reserveJob("queue")).thenReturn(StubData.VALID_JOB_REQUEST);
-    when(mockJobSpecTransformer.deserializeJobSpec(StubData.TEST_JOB_SPEC_DATA_STRING))
-        .thenReturn(StubData.TEST_JOB_SPEC);
-    when(mockJsonJobDataTransformer.deserializeJobData(
-            StubData.TEST_JOB_SPEC.getSerializedJobData(),
-            Class.forName(StubData.TEST_JOB_SPEC.getJobClass())))
-        .thenReturn((JobData) StubData.NO_JOB_DATA);
-    when(mockJobRepository.findJobForJobData(StubData.NO_JOB_DATA.getJobData()))
-        .thenReturn((Job) jobToRun);
-
-    assertTrue(yerbieConsumer.fetchAndSubmitOneJob());
-
-    verify(mockYerbieAPI).finishedJob("jobToken");
-    assertEquals(1, jobToRun.getCounter());
-  }
-
-  @Test
-  @SuppressWarnings("unchecked")
   public void testFetchValidJobWithData() throws Exception {
     StubData.TestJobWithData jobToRun = new StubData.TestJobWithData();
     when(mockYerbieAPI.reserveJob("queue")).thenReturn(StubData.VALID_JOB_REQUEST);
