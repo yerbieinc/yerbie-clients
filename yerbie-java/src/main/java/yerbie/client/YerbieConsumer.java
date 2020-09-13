@@ -44,7 +44,7 @@ public class YerbieConsumer {
 
   public void start() {
     processing = true;
-    // If an exception happens, this should keep going no matter what. Right now it blows up.
+
     pollingExecutorService.scheduleWithFixedDelay(
         () -> {
           try {

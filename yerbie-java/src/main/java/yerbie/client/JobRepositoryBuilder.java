@@ -12,8 +12,10 @@ public class JobRepositoryBuilder {
     jobDatatoJobSupplierMap = new HashMap<>();
   }
 
+  // Map is immutable, but since this is a builder we want the underlying map to be
+  // mutable. Hence converting it into a HashMap.
   public JobRepositoryBuilder(Class<?> jobDataClass, Supplier<Job<?>> jobSupplier) {
-    jobDatatoJobSupplierMap = Map.of(jobDataClass, jobSupplier);
+    jobDatatoJobSupplierMap = new HashMap<>(Map.of(jobDataClass, jobSupplier));
   }
 
   public JobRepository build() {

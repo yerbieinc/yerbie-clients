@@ -45,16 +45,23 @@ public class StubData {
     }
   }
 
-  public static class TestJob implements Job<Void> {
-    private int counter;
+  public static class TestJobDataTwo {
+    String name;
 
-    @Override
-    public void run(Void nothing) {
-      counter++;
+    @JsonCreator
+    public TestJobDataTwo(@JsonProperty("name") String name) {
+      this.name = name;
     }
 
-    public int getCounter() {
-      return counter;
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      if (!(other instanceof TestJobDataTwo)) return false;
+
+      return this.name.equals(((TestJobDataTwo) other).getName());
     }
   }
 
