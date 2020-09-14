@@ -4,5 +4,5 @@ import yerbie.exception.JobNotFoundException;
 import yerbie.job.Job;
 
 public interface JobRepository {
-  Job<Object> findJobForJobClass(Class jobData) throws JobNotFoundException;
+  Job<Object> findJobForJobData(Object jobData) throws JobNotFoundException;
 }

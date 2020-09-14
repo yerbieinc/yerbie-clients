@@ -17,6 +17,6 @@ public class JobRepositoryBuilderTest {
     jobRepositoryBuilder.withJobData(StubData.TestJobDataTwo.class, StubData.TestJobWithData::new);
 
     jobRepositoryBuilder.build();
-    assertNotNull(jobRepositoryBuilder.build().findJobForJobClass(StubData.TestJobData.class));
+    assertNotNull(jobRepositoryBuilder.build().findJobForJobData(new StubData.TestJobData("hi")));
   }
 }

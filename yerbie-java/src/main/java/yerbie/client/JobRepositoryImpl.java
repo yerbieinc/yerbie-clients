@@ -13,11 +13,11 @@ public class JobRepositoryImpl implements JobRepository {
   }
 
   @Override
-  public Job findJobForJobClass(Class jobClass) throws JobNotFoundException {
-    if (!(jobDatatoJobSupplierMap.containsKey(jobClass))) {
-      throw new JobNotFoundException(jobClass);
+  public Job findJobForJobData(Object jobData) throws JobNotFoundException {
+    if (!(jobDatatoJobSupplierMap.containsKey(jobData.getClass()))) {
+      throw new JobNotFoundException(jobData.getClass());
     }
 
-    return jobDatatoJobSupplierMap.get(jobClass).get();
+    return jobDatatoJobSupplierMap.get(jobData.getClass()).get();
   }
 }
