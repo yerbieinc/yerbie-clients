@@ -58,7 +58,7 @@ public class YerbieConsumerTest {
             StubData.TEST_JOB_SPEC.getSerializedJobData(),
             Class.forName(StubData.TEST_JOB_SPEC.getJobClass())))
         .thenReturn((JobData) StubData.TEST_YERBIE_JOB_DATA);
-    when(mockJobRepository.findJobForJobData(StubData.TEST_YERBIE_JOB_DATA.getJobData()))
+    when(mockJobRepository.findJobForJobClass(StubData.TestJobWithData.class))
         .thenReturn((Job) jobToRun);
 
     assertTrue(yerbieConsumer.fetchAndSubmitOneJob());

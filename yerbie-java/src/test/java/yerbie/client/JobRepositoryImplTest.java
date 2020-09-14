@@ -14,7 +14,7 @@ public class JobRepositoryImplTest {
   @Before
   public void setup() {
     JobRepositoryBuilder jobRepositoryBuilder = new JobRepositoryBuilder();
-    jobRepositoryBuilder.withJobData(StubData.TestJobData.class, StubData.TestJobWithData::new);
+    jobRepositoryBuilder.withJobData(StubData.TestJobWithData.class, StubData.TestJobWithData::new);
 
     jobRepository = jobRepositoryBuilder.build();
   }
@@ -23,11 +23,11 @@ public class JobRepositoryImplTest {
   public void testFindsJob() throws Exception {
     assertEquals(
         StubData.TestJobWithData.class,
-        jobRepository.findJobForJobData(StubData.TEST_JOB_DATA).getClass());
+        jobRepository.findJobForJobClass(StubData.TestJobWithData.class).getClass());
   }
 
   @Test(expected = JobNotFoundException.class)
   public void testExceptionInvalidClass() throws Exception {
-    jobRepository.findJobForJobData("hello");
+    jobRepository.findJobForJobClass(String.class);
   }
 }
