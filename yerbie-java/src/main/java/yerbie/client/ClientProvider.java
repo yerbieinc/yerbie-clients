@@ -21,7 +21,9 @@ public class ClientProvider {
 
   public YerbieClient initializeClient(ObjectMapper objectMapper) {
     DataTransformer dataTransformer = new DataTransformer(objectMapper);
-    JobSpecTransformer jobSpecTransformer = new JobSpecTransformer(objectMapper);
+
+    // We want to use our own object mapper for internal classes.
+    JobSpecTransformer jobSpecTransformer = new JobSpecTransformer(new ObjectMapper());
 
     return new YerbieClient(host, port, dataTransformer, jobSpecTransformer);
   }
@@ -38,10 +40,20 @@ public class ClientProvider {
       ExecutorService executorService) {
     YerbieAPI yerbieAPI = new YerbieAPIImpl(String.format(URL_FORMAT_STRING, host, port));
     DataTransformer dataTransformer = new DataTransformer(objectMapper);
-    JobSpecTransformer jobSpecTransformer = new JobSpecTransformer(objectMapper);
+
+    // We want to use our own object mapper for internal classes.
+    JobSpecTransformer jobSpecTransformer = new JobSpecTransformer(new ObjectMapper());
+
+    RetryHandler retryHandler = new RetryHandler(yerbieAPI, jobSpecTransformer);
 
     return new YerbieConsumer(
-        executorService, yerbieAPI, queue, jobSpecTransformer, dataTransformer, jobRepository);
+        executorService,
+        yerbieAPI,
+        queue,
+        jobSpecTransformer,
+        dataTransformer,
+        jobRepository,
+        retryHandler);
   }
 
   public YerbieConsumer initializeYerbieConsumer(String queue, JobRepository jobRepository) {

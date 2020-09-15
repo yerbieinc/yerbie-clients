@@ -38,7 +38,9 @@ public class YerbieClientTest {
             new JobSpec(
                 StubData.TEST_YERBIE_JOB_DATA.getJobDataClass().getName(),
                 StubData.TEST_JOB_DATA_STRING,
-                SerializationFormat.JSON)))
+                SerializationFormat.JSON,
+                StubData.DEFAULT_RETRY_POLICY,
+                0)))
         .thenReturn(StubData.TEST_JOB_SPEC_DATA_STRING);
   }
 

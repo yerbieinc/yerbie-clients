@@ -24,6 +24,7 @@ public class YerbieConsumer {
   private final JobSpecTransformer jobSpecTransformer;
   private final DataTransformer dataTransformer;
   private final JobRepository jobRepository;
+  private final RetryHandler retryHandler;
   private boolean processing = false;
 
   public YerbieConsumer(
@@ -32,13 +33,15 @@ public class YerbieConsumer {
       String queue,
       JobSpecTransformer jobSpecTransformer,
       DataTransformer dataTransformer,
-      JobRepository jobRepository) {
+      JobRepository jobRepository,
+      RetryHandler retryHandler) {
     this.jobExecutorService = jobExecutorService;
     this.yerbieAPI = yerbieAPI;
     this.queue = queue;
     this.jobSpecTransformer = jobSpecTransformer;
     this.dataTransformer = dataTransformer;
     this.jobRepository = jobRepository;
+    this.retryHandler = retryHandler;
     this.pollingExecutorService = Executors.newSingleThreadScheduledExecutor();
   }
 
@@ -81,6 +84,17 @@ public class YerbieConsumer {
     }
   }
 
+  private void runJob(Job<Object> job, JobData<?> jobData, JobRequest jobRequest) {
+
+    job.run(jobData.getJobData());
+
+    try {
+      yerbieAPI.finishedJob(jobRequest.jobToken());
+    } catch (Exception ex) {
+      LOGGER.error("Error marking job as finished after it ran.", ex);
+    }
+  }
+
   @VisibleForTesting
   protected boolean fetchAndSubmitOneJob() {
     JobRequest jobRequest = yerbieAPI.reserveJob(queue);
@@ -104,10 +118,9 @@ public class YerbieConsumer {
           () -> {
             // TODO: implement retry handling here.
             try {
-              job.run(jobData.getJobData());
-              yerbieAPI.finishedJob(jobRequest.jobToken());
+              runJob(job, jobData, jobRequest);
             } catch (Exception ex) {
-              System.out.println(ex.getMessage());
+              retryHandler.handleRetry(jobSpec, jobRequest, jobSpec.getCurrentRuns() + 1, ex);
             }
           });
     } catch (ClassNotFoundException ex) {
