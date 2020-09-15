@@ -29,4 +29,18 @@ public class JobSpecTransformerTest {
     assertEquals(StubData.TEST_JOB_SPEC.getJobClass(), jobSpec.getJobClass());
     assertEquals(StubData.TEST_JOB_SPEC.getSerializedJobData(), jobSpec.getSerializedJobData());
   }
+
+  @Test
+  public void testSerializeExponential() throws Exception {
+    assertEquals(
+        StubData.TEST_JOB_EXPONENTIAL_JOB_SPEC_DATA_STRING,
+        jobSpecTransformer.serializeJobSpec(StubData.TEST_EXPONENTIAL_JOB_SPEC));
+  }
+
+  @Test
+  public void testDeserializeExponential() throws Exception {
+    assertEquals(
+        StubData.TEST_EXPONENTIAL_JOB_SPEC,
+        jobSpecTransformer.deserializeJobSpec(StubData.TEST_JOB_EXPONENTIAL_JOB_SPEC_DATA_STRING));
+  }
 }

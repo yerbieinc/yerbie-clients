@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.WRAPPER_OBJECT,
     property = "type")
-@JsonSubTypes({@JsonSubTypes.Type(value = FixedRetryPolicy.class, name = "fixed")})
+@JsonSubTypes({
+  @JsonSubTypes.Type(value = FixedRetryPolicy.class, name = "fixed"),
+  @JsonSubTypes.Type(value = ExponentialRetryPolicy.class, name = "exponential")
+})
 public interface RetryPolicy {
   boolean shouldRetry(int currentRuns);
 
