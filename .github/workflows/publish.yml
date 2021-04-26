@@ -25,6 +25,7 @@ jobs:
         java-version: '14'
         distribution: 'adopt'
     - name: Publish artifact
+      working-directory: ./yerbie-java
       env:
          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
