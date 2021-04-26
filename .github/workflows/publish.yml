@@ -6,9 +6,11 @@ name: Java CI with Maven
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "java/v*.*.*"
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
+
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,7 +32,7 @@ jobs:
         # If we split on '/' and take the 3rd value,
         # we can get the release name.
       run: |
-        NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
+        NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f4)
         echo "New version: ${NEW_VERSION}"
         echo "Github username: ${GITHUB_ACTOR}"
         ./gradlew -Pversion=${NEW_VERSION} publish
