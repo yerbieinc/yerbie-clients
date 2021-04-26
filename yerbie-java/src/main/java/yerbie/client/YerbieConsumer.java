@@ -112,11 +112,13 @@ public class YerbieConsumer {
       Job<Object> job = jobRepository.findJobForJobData(jobData.getJobData());
 
       LOGGER.info(
-          "Executing job {} with jobData {}", job.getClass().getName(), jobData.getJobData());
+          "Executing job:{} {} with jobData {}.",
+          jobRequest.jobToken(),
+          job.getClass().getName(),
+          jobData.getJobData());
 
       jobExecutorService.submit(
           () -> {
-            // TODO: implement retry handling here.
             try {
               runJob(job, jobData, jobRequest);
             } catch (Exception ex) {
