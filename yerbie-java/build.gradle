@@ -73,7 +73,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/yerbie/yerbie-java")
+            url = uri("https://maven.pkg.github.com/yerbieinc/yerbie-java")
 
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
