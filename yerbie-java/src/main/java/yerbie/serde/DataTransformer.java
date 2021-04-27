@@ -1,7 +1,6 @@
 package yerbie.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.NotImplementedException;
 
 public class DataTransformer {
 
@@ -16,6 +15,6 @@ public class DataTransformer {
       return new JSONJobDataTransformer(objectMapper);
     }
 
-    throw new NotImplementedException("Only JSON Job Data Transformers are implemented now.");
+    throw new IllegalArgumentException("Only JSON Job Data Transformers are implemented now.");
   }
 }

@@ -89,7 +89,7 @@ public class YerbieConsumer {
     job.run(jobData.getJobData());
 
     try {
-      yerbieAPI.finishedJob(jobRequest.jobToken());
+      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
     } catch (Exception ex) {
       LOGGER.error("Error marking job as finished after it ran.", ex);
     }
@@ -97,12 +97,12 @@ public class YerbieConsumer {
 
   @VisibleForTesting
   protected boolean fetchAndSubmitOneJob() {
-    JobRequest jobRequest = yerbieAPI.reserveJob(queue);
+    JobRequest jobRequest = yerbieAPI.reserveJobAsync(queue).block();
 
-    if (jobRequest.jobToken() == null) return false;
+    if (jobRequest == null || jobRequest.getJobToken() == null) return false;
 
     try {
-      JobSpec jobSpec = jobSpecTransformer.deserializeJobSpec(jobRequest.jobData());
+      JobSpec jobSpec = jobSpecTransformer.deserializeJobSpec(jobRequest.getJobData());
       JobDataTransformer transformer =
           dataTransformer.getJobDataTransformer(jobSpec.getSerializationFormat());
       JobData<?> jobData =
@@ -113,7 +113,7 @@ public class YerbieConsumer {
 
       LOGGER.info(
           "Executing job:{} {} with jobData {}.",
-          jobRequest.jobToken(),
+          jobRequest.getJobToken(),
           job.getClass().getName(),
           jobData.getJobData());
 
@@ -126,19 +126,19 @@ public class YerbieConsumer {
             }
           });
     } catch (ClassNotFoundException ex) {
-      LOGGER.error("Could not find class for job data {}.", jobRequest.jobData(), ex);
-      yerbieAPI.finishedJob(jobRequest.jobToken());
+      LOGGER.error("Could not find class for job data {}.", jobRequest.getJobData(), ex);
+      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
     } catch (SerializationException ex) {
       LOGGER.error(
           "Error deserializing job data {}. It will be marked as finished.",
-          jobRequest.jobData(),
+          jobRequest.getJobData(),
           ex);
-      yerbieAPI.finishedJob(jobRequest.jobToken());
+      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
     } catch (JobNotFoundException ex) {
       LOGGER.error(
           "Could not find job for given job data. This job will be marked as finished without running.",
           ex);
-      yerbieAPI.finishedJob(jobRequest.jobToken());
+      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
     }
 
     return true;

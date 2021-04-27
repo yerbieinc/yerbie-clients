@@ -41,10 +41,10 @@ public class StubData {
 
   public static JobRequest VALID_JOB_REQUEST =
       new JobRequest()
-          .withJobData(TEST_JOB_SPEC_DATA_STRING)
-          .withJobToken("jobToken")
-          .withDelaySeconds(10)
-          .withQueue("queue");
+          .setJobData(TEST_JOB_SPEC_DATA_STRING)
+          .setJobToken("jobToken")
+          .setDelaySeconds(10)
+          .setQueue("queue");
 
   public static class TestJobData {
     String name;
