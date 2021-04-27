@@ -32,7 +32,7 @@ jobs:
     - name: Publish artifact
       working-directory: ./yerbie-java
       env:
-         GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         # The GITHUB_REF tag comes in the format 'refs/tags/xxx'.
         # If we split on '/' and take the 3rd value,
