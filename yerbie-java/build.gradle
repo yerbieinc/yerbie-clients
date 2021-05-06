@@ -36,7 +36,6 @@ dependencies {
 
     // Logging
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.13'
-    compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.13'
 }
 
 spotless {
@@ -58,7 +57,7 @@ task generateAutorestClient(type: Exec) {
 }
 
 group = 'org.yerbie'
-version = '0.0.2'
+version = '0.0.3'
 sourceCompatibility = '1.9'
 
 publishing {

@@ -99,7 +99,10 @@ public class YerbieConsumer {
   protected boolean fetchAndSubmitOneJob() {
     JobRequest jobRequest = yerbieAPI.reserveJobAsync(queue).block();
 
-    if (jobRequest == null || jobRequest.getJobToken() == null) return false;
+    if (jobRequest == null || jobRequest.getJobToken() == null) {
+      LOGGER.debug("Received empty jobRequest from Yerbie.");
+      return false;
+    }
 
     try {
       JobSpec jobSpec = jobSpecTransformer.deserializeJobSpec(jobRequest.getJobData());
