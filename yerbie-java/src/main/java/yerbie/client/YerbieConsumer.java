@@ -125,7 +125,7 @@ public class YerbieConsumer {
             try {
               runJob(job, jobData, jobRequest);
             } catch (Exception ex) {
-              retryHandler.handleRetry(jobSpec, jobRequest, jobSpec.getCurrentRuns() + 1, ex);
+              retryHandler.handleRetry(jobSpec, jobRequest, jobSpec.getCurrentRuns(), ex);
             }
           });
     } catch (ClassNotFoundException ex) {

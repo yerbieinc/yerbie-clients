@@ -94,10 +94,9 @@ public class YerbieConsumerTest {
 
     assertTrue(yerbieConsumer.fetchAndSubmitOneJob());
 
-    // verify(mockYerbieAPI).finishedJob("jobToken");
     verify(mockRetryHandler)
         .handleRetry(
-            eq(StubData.TEST_JOB_SPEC), any(JobRequest.class), eq(1), any(RuntimeException.class));
+            eq(StubData.TEST_JOB_SPEC), any(JobRequest.class), eq(0), any(RuntimeException.class));
   }
 
   @Test

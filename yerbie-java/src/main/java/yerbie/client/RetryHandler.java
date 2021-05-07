@@ -25,9 +25,11 @@ public class RetryHandler {
 
     yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
 
-    if (!retryPolicy.shouldRetry(currentRuns)) {
+    int newRuns = currentRuns + 1;
+
+    if (!retryPolicy.shouldRetry(newRuns)) {
       LOGGER.info(
-          "Encountered an exception when running. {} with token {} has reached the limit of {} and will no longer run. Exception msg: {}",
+          "Encountered an exception when running. {} with token {} has reached the retry limit of {} and will no longer run. Exception msg: {}",
           jobSpec.getJobClass(),
           jobRequest.getJobToken(),
           retryPolicy.getTotalRetries(),
@@ -35,7 +37,7 @@ public class RetryHandler {
       return;
     }
 
-    long nextDelaySeconds = retryPolicy.getNextDelaySeconds(currentRuns);
+    long nextDelaySeconds = retryPolicy.getNextDelaySeconds(newRuns);
 
     try {
       JobSpec newJobSpec =
@@ -44,7 +46,7 @@ public class RetryHandler {
               jobSpec.getSerializedJobData(),
               jobSpec.getSerializationFormat(),
               jobSpec.getRetryPolicy(),
-              currentRuns);
+              newRuns);
       String serializedJobSpec = jobSpecTransformer.serializeJobSpec(newJobSpec);
 
       yerbieAPI
@@ -53,7 +55,7 @@ public class RetryHandler {
           .block();
 
       LOGGER.info(
-          "Job with token {} encountered exception {}. It has been queued for retry. It has ran {} times.",
+          "Job with token {} encountered exception {}. It has been queued for retry. It has been retried {} times.",
           jobRequest.getJobToken(),
           ex.getMessage(),
           currentRuns);
