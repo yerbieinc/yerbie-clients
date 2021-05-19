@@ -12,11 +12,7 @@ import yerbie.exception.SerializationException;
 import yerbie.exception.UnserializableJobDataException;
 import yerbie.job.FixedRetryPolicy;
 import yerbie.job.RetryPolicy;
-import yerbie.serde.DataTransformer;
-import yerbie.serde.JobData;
-import yerbie.serde.JobDataTransformer;
-import yerbie.serde.JobSpec;
-import yerbie.serde.JobSpecTransformer;
+import yerbie.serde.*;
 
 public class YerbieClient {
   private static final String URL_FORMAT_STRING = "%s:%d";
@@ -44,32 +40,38 @@ public class YerbieClient {
     this.jobSpecTransformer = jobSpecTransformer;
   }
 
-  public <D> String scheduleAsyncJob(String queue, JobData<D> jobData) {
-    return schedule(0, queue, jobData, DEFAULT_RETRY_POLICY);
+  public <D> String scheduleAsyncJob(String queue, D jobData) {
+    return schedule(0, queue, jobData, DEFAULT_RETRY_POLICY, SerializationFormat.JSON);
   }
 
-  public <D> String scheduleJob(long delaySeconds, String queue, JobData<D> jobData) {
-    return schedule(delaySeconds, queue, jobData, DEFAULT_RETRY_POLICY);
+  public <D> String scheduleJob(long delaySeconds, String queue, D jobData) {
+    return schedule(delaySeconds, queue, jobData, DEFAULT_RETRY_POLICY, SerializationFormat.JSON);
   }
 
   public <D> String scheduleJob(
-      long delaySeconds, String queue, JobData<D> jobData, RetryPolicy retryPolicy) {
-    return schedule(delaySeconds, queue, jobData, retryPolicy);
+      long delaySeconds, String queue, D jobData, RetryPolicy retryPolicy) {
+    return schedule(delaySeconds, queue, jobData, retryPolicy, SerializationFormat.JSON);
   }
 
   private <D> String schedule(
-      long delaySeconds, String queue, JobData<D> jobData, RetryPolicy retryPolicy) {
+      long delaySeconds,
+      String queue,
+      D jobData,
+      RetryPolicy retryPolicy,
+      SerializationFormat serializationFormat) {
+    JobData<D> wrappedJobData = getWrappedJobData(jobData, serializationFormat);
+
     try {
       JobDataTransformer jobDataTransformer =
-          dataTransformer.getJobDataTransformer(jobData.getSerializationFormat());
+          dataTransformer.getJobDataTransformer(wrappedJobData.getSerializationFormat());
       String jobToken = UUID.randomUUID().toString();
-      String serializedJobData = jobDataTransformer.serializeJobData(jobData);
+      String serializedJobData = jobDataTransformer.serializeJobData(wrappedJobData);
 
       JobSpec jobSpec =
           new JobSpec(
-              jobData.getJobDataClass().getName(),
+              wrappedJobData.getJobDataClass().getName(),
               serializedJobData,
-              jobData.getSerializationFormat(),
+              wrappedJobData.getSerializationFormat(),
               retryPolicy,
               0);
 
@@ -93,13 +95,21 @@ public class YerbieClient {
       throw new InvalidJobDataClass(
           String.format(
               "Cannot load the job data class for job data class %s.",
-              jobData.getJobDataClass().getName()),
+              wrappedJobData.getJobDataClass().getName()),
           ex);
     } catch (SerializationException ex) {
       throw new UnserializableJobDataException(
           String.format(
-              "Unable to serialize jobData class %s.", jobData.getJobDataClass().getName()),
+              "Unable to serialize jobData class %s.", wrappedJobData.getJobDataClass().getName()),
           ex);
     }
+  }
+
+  private <D> JobData<D> getWrappedJobData(D jobData, SerializationFormat serializationFormat) {
+    if (serializationFormat == SerializationFormat.JSON) {
+      return new JSONJobData<>(jobData);
+    }
+
+    throw new UnserializableJobDataException("Unsupported serialization format");
   }
 }

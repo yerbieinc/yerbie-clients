@@ -28,4 +28,17 @@ public class JobData<D> {
   public SerializationFormat getSerializationFormat() {
     return serializationFormat;
   }
+
+  @Override
+  public boolean equals(Object other) {
+    if (!(other instanceof JobData)) {
+      return false;
+    }
+
+    JobData otherJobData = (JobData) other;
+
+    return this.jobData.equals(otherJobData.jobData)
+        && this.serializationFormat.equals(otherJobData.serializationFormat)
+        && this.jobDataClass.equals(otherJobData.jobDataClass);
+  }
 }

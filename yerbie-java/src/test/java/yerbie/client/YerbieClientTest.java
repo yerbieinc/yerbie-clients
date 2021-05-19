@@ -50,7 +50,7 @@ public class YerbieClientTest {
 
   @Test
   public void testScheduleJobSuccessful() {
-    yerbieClient.scheduleJob(10, "queue", StubData.TEST_YERBIE_JOB_DATA);
+    yerbieClient.scheduleJob(10, "queue", StubData.TEST_JOB_DATA);
     verify(yerbieAPI)
         .scheduleJobAsync(
             argThat(
@@ -65,7 +65,7 @@ public class YerbieClientTest {
   public void testSerializationFailure() throws Exception {
     when(jsonJobDataTransformer.serializeJobData(StubData.TEST_YERBIE_JOB_DATA))
         .thenThrow(new SerializationException(new IOException("whoops")));
-    yerbieClient.scheduleJob(10, "queue", StubData.TEST_YERBIE_JOB_DATA);
+    yerbieClient.scheduleJob(10, "queue", StubData.TEST_JOB_DATA);
   }
 
   public class JobRequestMatcher implements ArgumentMatcher<JobRequest> {
