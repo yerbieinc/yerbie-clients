@@ -14,6 +14,7 @@ plugins {
     id "com.diffplug.gradle.spotless" version "4.3.0"
 
     id 'maven-publish'
+    id 'signing'
 }
 
 repositories {
@@ -56,14 +57,52 @@ task generateAutorestClient(type: Exec) {
     commandLine 'sh', './generateJavaClient.sh'
 }
 
+
 group = 'dev.yerbie'
 version = '0.0.5'
 sourceCompatibility = '1.9'
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 publishing {
     publications {
         myLibrary(MavenPublication) {
             from components.java
+        }
+
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'Yerbie Java'
+                groupId = 'dev.yerbie'
+                description = 'The Java client library for Yerbie.'
+                url = 'https://github.com/yerbieinc/yerbie-clients/'
+                from components.java
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url  ='http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/yerbieinc/yerbie-clients.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/yerbieinc/yerbie-clients.git'
+                    url = 'https://github.com/yerbieinc/yerbie-clients/'
+                }
+                developers {
+                    developer {
+                        name = "Claudio Wilson"
+                        email = "claudio@yerbie.dev"
+                        organization = "Yerbie"
+                        organizationUrl = "yerbie.dev"
+                    }
+                }
+            }
         }
     }
 
@@ -71,16 +110,33 @@ publishing {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/yerbieinc/yerbie-clients")
-
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
+
+        maven {
+            name = "MavenCentral"
+            def releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = isReleaseVersion ? releaseRepo : snapshotRepo
+            credentials {
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : "Unknown user"
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : "Unknown password"
+            }
+        }
     }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
 }
 
 build.dependsOn preBuild
 publish.dependsOn preBuild
 preBuild.dependsOn generateAutorestClient
-
