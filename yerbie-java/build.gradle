@@ -56,7 +56,7 @@ task generateAutorestClient(type: Exec) {
     commandLine 'sh', './generateJavaClient.sh'
 }
 
-group = 'org.yerbie'
+group = 'dev.yerbie'
 version = '0.0.5'
 sourceCompatibility = '1.9'
 
