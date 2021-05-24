@@ -138,7 +138,5 @@ tasks.withType(Sign) {
 }
 
 build.dependsOn preBuild
-publish.dependsOn preBuild
-publishMyLibraryPublicationToGitHubPackagesRepository.dependsOn preBuild
-publishMavenJavaPublicationToMavenCentralRepository.dependsOn preBuild
+compileJava.dependsOn preBuild
 preBuild.dependsOn generateAutorestClient
