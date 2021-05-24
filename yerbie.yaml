@@ -54,14 +54,14 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/Error"
-  "/jobs/finished/":
+  "/jobs/finished/{jobToken}":
     post:
       summary: Tell Yerbie the client is finished with a job
       operationId: finishedJob
       tags:
       - tags
       parameters:
-        - in: query
+        - in: path
           name: jobToken
           required: true
           description: The job token that was finished
