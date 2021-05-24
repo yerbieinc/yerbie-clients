@@ -41,5 +41,5 @@ jobs:
         NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f4)
         echo "New version: ${NEW_VERSION}"
         echo "Github username: ${GITHUB_ACTOR}"
-        ./gradlew -Pversion=${NEW_VERSION} publish
+        ./gradlew -Pversion=${NEW_VERSION} publishMyLibraryPublicationToGithubPackagesRepository
       
