@@ -53,8 +53,8 @@ public class YerbieClient {
     return schedule(delaySeconds, queue, jobData, retryPolicy, SerializationFormat.JSON);
   }
 
-  public String deleteJob(String jobToken) {
-    return yerbieAPI.deleteJobAsync(jobToken).block().getJobToken();
+  public boolean deleteJob(String jobToken) {
+    return yerbieAPI.deleteJobAsync(jobToken).block().getJobToken() != null;
   }
 
   private <D> String schedule(
