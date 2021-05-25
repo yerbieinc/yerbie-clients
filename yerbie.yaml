@@ -78,6 +78,30 @@ paths:
           description: unexpected error
           schema:
             $ref: "#/definitions/Error"
+  "/jobs/delete/{jobToken}":
+    post:
+      summary: Tell Yerbie to delete a delayed job
+      operationId: deleteJob
+      tags:
+      - tags
+      parameters:
+        - in: path
+          name: jobToken
+          required: true
+          description: The job to be deleted
+          type: string
+      responses:
+        '200':
+          description: A valid job response
+          schema:
+            type: object
+            properties:
+              jobToken:
+                type: string
+        default:
+          description: unexpected error
+          schema:
+            $ref: "#/definitions/Error"
 definitions:
   JobRequest:
     required:
