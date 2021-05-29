@@ -70,10 +70,7 @@ paths:
         '200':
           description: A valid job response
           schema:
-            type: object
-            properties:
-              jobToken:
-                type: string
+            $ref: "#/definitions/JobToken"
         default:
           description: unexpected error
           schema:
@@ -94,10 +91,7 @@ paths:
         '200':
           description: A valid job response
           schema:
-            type: object
-            properties:
-              jobToken:
-                type: string
+            $ref: "#/definitions/JobToken"
         default:
           description: unexpected error
           schema:
@@ -119,6 +113,14 @@ definitions:
       delaySeconds:
         type: integer
         format: int64
+    type: object
+  JobToken:
+    required:
+      - jobToken
+    properties:
+      jobToken:
+        type: string
+    type: object
   Error:
     required:
     - code
@@ -129,3 +131,4 @@ definitions:
         format: int32
       message:
         type: string
+    type: object
