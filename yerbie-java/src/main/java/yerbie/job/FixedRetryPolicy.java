@@ -12,9 +12,9 @@ public class FixedRetryPolicy implements RetryPolicy {
   @JsonCreator
   public FixedRetryPolicy(
       @JsonProperty("delayIntervalSeconds") long delayIntervalSeconds,
-      @JsonProperty("totalRuns") int totalRuns) {
+      @JsonProperty("totalRetries") int totalRetries) {
     this.delayIntervalSeconds = delayIntervalSeconds;
-    this.totalRetries = totalRuns;
+    this.totalRetries = totalRetries;
   }
 
   public FixedRetryPolicy() {}

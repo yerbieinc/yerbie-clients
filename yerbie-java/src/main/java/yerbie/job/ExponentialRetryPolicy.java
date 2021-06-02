@@ -12,9 +12,9 @@ public class ExponentialRetryPolicy implements RetryPolicy {
   @JsonCreator
   public ExponentialRetryPolicy(
       @JsonProperty("initialDelaySeconds") long initialDelaySeconds,
-      @JsonProperty("totalRuns") int totalRuns) {
+      @JsonProperty("totalRetries") int totalRetries) {
     this.initialDelaySeconds = initialDelaySeconds;
-    this.totalRetries = totalRuns;
+    this.totalRetries = totalRetries;
   }
 
   public ExponentialRetryPolicy() {}
