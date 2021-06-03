@@ -104,10 +104,12 @@ public class YerbieConsumer {
       return false;
     }
 
+    JobSpec jobSpec = jobSpecTransformer.deserializeJobSpec(jobRequest.getJobData());
+
     try {
-      JobSpec jobSpec = jobSpecTransformer.deserializeJobSpec(jobRequest.getJobData());
       JobDataTransformer transformer =
           dataTransformer.getJobDataTransformer(jobSpec.getSerializationFormat());
+
       JobData<?> jobData =
           transformer.deserializeJobData(
               jobSpec.getSerializedJobData(), Class.forName(jobSpec.getJobClass()));
@@ -129,19 +131,21 @@ public class YerbieConsumer {
             }
           });
     } catch (ClassNotFoundException ex) {
-      LOGGER.error("Could not find class for job data {}.", jobRequest.getJobData(), ex);
-      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
-    } catch (SerializationException ex) {
       LOGGER.error(
-          "Error deserializing job data {}. It will be marked as finished.",
+          "Could not find class for job data {}. Retrying job according to retry policy.",
           jobRequest.getJobData(),
           ex);
-      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
+      retryHandler.handleRetry(jobSpec, jobRequest, jobSpec.getCurrentRuns(), ex);
+    } catch (SerializationException ex) {
+      LOGGER.error(
+          "Error deserializing job data {}. Retrying job according to retry policy.",
+          jobRequest.getJobData(),
+          ex);
+      retryHandler.handleRetry(jobSpec, jobRequest, jobSpec.getCurrentRuns(), ex);
     } catch (JobNotFoundException ex) {
       LOGGER.error(
-          "Could not find job for given job data. This job will be marked as finished without running.",
-          ex);
-      yerbieAPI.finishedJobAsync(jobRequest.getJobToken()).block();
+          "Could not find job for given job data. Retrying job according to retry policy.", ex);
+      retryHandler.handleRetry(jobSpec, jobRequest, jobSpec.getCurrentRuns(), ex);
     }
 
     return true;

@@ -59,7 +59,7 @@ task generateAutorestClient(type: Exec) {
 
 
 group = 'dev.yerbie'
-version = '1.1.0'
+version = '1.2.0'
 sourceCompatibility = '1.9'
 
 java {
@@ -80,8 +80,8 @@ publishing {
             pom {
                 name = 'Yerbie Java'
                 groupId = 'dev.yerbie'
-                description = 'The Java client library for Yerbie.'
-                url = 'https://github.com/yerbieinc/yerbie-clients/'
+                description = 'The Java client library for the Yerbie job queue and scheduler'
+                url = 'https://www.yerbie.dev'
                 from components.java
                 licenses {
                     license {

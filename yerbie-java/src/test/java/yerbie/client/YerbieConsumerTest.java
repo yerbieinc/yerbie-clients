@@ -101,10 +101,20 @@ public class YerbieConsumerTest {
   public void testSerializationException() throws Exception {
     when(mockYerbieAPI.reserveJobAsync("queue")).thenReturn(Mono.just(StubData.VALID_JOB_REQUEST));
     when(mockJobSpecTransformer.deserializeJobSpec(StubData.TEST_JOB_SPEC_DATA_STRING))
-        .thenThrow(new SerializationException(new RuntimeException()));
+        .thenReturn(StubData.TEST_JOB_SPEC);
+    when(mockJsonJobDataTransformer.deserializeJobData(
+            StubData.TEST_JOB_SPEC.getSerializedJobData(),
+            Class.forName(StubData.TEST_JOB_SPEC.getJobClass())))
+        .thenThrow(new SerializationException(new RuntimeException("uh oh")));
 
     assertTrue(yerbieConsumer.fetchAndSubmitOneJob());
-    verify(mockYerbieAPI).finishedJobAsync("jobToken");
+
+    verify(mockRetryHandler)
+        .handleRetry(
+            eq(StubData.TEST_JOB_SPEC),
+            any(JobRequest.class),
+            eq(0),
+            any(SerializationException.class));
   }
 
   @Test
@@ -117,6 +127,9 @@ public class YerbieConsumerTest {
         .thenReturn(badJobSpec);
 
     assertTrue(yerbieConsumer.fetchAndSubmitOneJob());
-    verify(mockYerbieAPI).finishedJobAsync("jobToken");
+
+    verify(mockRetryHandler)
+        .handleRetry(
+            eq(badJobSpec), any(JobRequest.class), eq(0), any(ClassNotFoundException.class));
   }
 }

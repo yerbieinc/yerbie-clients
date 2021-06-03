@@ -2,7 +2,7 @@ package yerbie.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import yerbie.exception.SerializationException;
+import yerbie.exception.JobSpecSerializationException;
 
 public class JobSpecTransformer {
 
@@ -12,19 +12,19 @@ public class JobSpecTransformer {
     this.objectMapper = objectMapper;
   }
 
-  public String serializeJobSpec(JobSpec jobSpec) throws SerializationException {
+  public String serializeJobSpec(JobSpec jobSpec) throws JobSpecSerializationException {
     try {
       return objectMapper.writeValueAsString(jobSpec);
     } catch (IOException ex) {
-      throw new SerializationException(ex);
+      throw new JobSpecSerializationException(ex);
     }
   }
 
-  public JobSpec deserializeJobSpec(String serializedJobSpec) throws SerializationException {
+  public JobSpec deserializeJobSpec(String serializedJobSpec) throws JobSpecSerializationException {
     try {
       return objectMapper.readValue(serializedJobSpec, JobSpec.class);
     } catch (IOException ex) {
-      throw new SerializationException(ex);
+      throw new JobSpecSerializationException(ex);
     }
   }
 }
